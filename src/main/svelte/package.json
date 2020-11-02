@@ -13,6 +13,10 @@
     "svelte",
     "webpack"
   ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/webcane/spring-svelte-webpack.git"
+  },
   "author": "webcane",
   "license": "ISC",
   "dependencies": {},
