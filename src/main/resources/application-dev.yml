@@ -1,0 +1,23 @@
+server:
+  #  port: 8080
+  #  servlet:
+  #    context-path: /api
+  error:
+    whitelabel:
+      enabled: false
+
+logging:
+  level:
+    web: DEBUG
+    org.springframework: INFO
+    org.springframework.web: DEBUG
+    org.springframework.security: DEBUG
+    io.github.webcane: DEBUG
+
+spring:
+  main:
+    banner-mode: "off"
+
+  devtools:
+    restart:
+      enabled: true

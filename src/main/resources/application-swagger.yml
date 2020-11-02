@@ -1,0 +1,6 @@
+springfox:
+  documentation:
+    swagger:
+      v2:
+        # default mapped URL path "/v2/api-docs"
+        path: "/swagger"
