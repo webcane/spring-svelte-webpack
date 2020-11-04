@@ -25,7 +25,7 @@ public class BasicSecurityConfig extends WebSecurityConfigurerAdapter {
     @Autowired
     public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
         auth.inMemoryAuthentication().withUser("user")
-                .password(passwordEncoder().encode("user"))//.roles("USER");
+                .password(passwordEncoder().encode("user")) //.roles("USER");
                 .authorities("ROLE_USER");
     }
 
@@ -37,9 +37,7 @@ public class BasicSecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         // super.configure(http); // DO NOT UNCOMMENT IT
-        http.httpBasic()
-                .and()
-                .authorizeRequests()
+        http.authorizeRequests()
                 .antMatchers("/items", "/user").hasAnyRole("USER")
                 .antMatchers("/management/**", "/actuator/**", "/console/**").permitAll()
                 .antMatchers("/", "/error").permitAll()
@@ -47,6 +45,7 @@ public class BasicSecurityConfig extends WebSecurityConfigurerAdapter {
                 .and()
                 .formLogin()
                 .loginProcessingUrl("/login")
+                // .successForwardUrl("http://localhost:3000")
                 .permitAll()
                 .and()
                 .logout()

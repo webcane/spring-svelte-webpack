@@ -18,6 +18,9 @@ spring:
   main:
     banner-mode: "off"
 
+  mvc:
+    log-request-details: true
+
   devtools:
     restart:
       enabled: true
