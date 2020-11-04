@@ -1,5 +1,6 @@
 const path = require('path');
 const merge = require('webpack-merge');
+const CopyWebpackPlugin = require('copy-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 
 const TARGET = process.env.npm_lifecycle_event;
@@ -8,51 +9,16 @@ const PATHS = {
     output: path.join(__dirname, '../../../target/classes/static')
 };
 
-const mode = process.env.NODE_ENV || 'development';
-const prod = mode === 'production';
+const mode = process.env.NODE_ENV || 'production';
 
 const common = {
-    entry: // [    PATHS.source  ]
-        {
-            bundle: ['./src/index.js'],
-        },
+    context: PATHS.source,
+    entry: {
+        bundle: ['./index.js'],
+    },
     output: {
         path: PATHS.output,
-        publicPath: '',
-        filename: 'bundle.js',
-        chunkFilename: '[name].[id].js'
-    },
-    module: {
-        // loaders: [{
-        //   exclude: /node_modules/,
-        //   loader: 'babel'
-        // }, {
-        //   test: /\.css$/,
-        //   loader: 'style!css'
-        // }]
-        rules: [
-            {
-                test: /\.svelte$/,
-                use: {
-                    loader: 'svelte-loader',
-                    options: {
-                        emitCss: true,
-                        hotReload: true
-                    }
-                }
-            },
-            {
-                test: /\.css$/,
-                use: [
-                    /**
-                     * MiniCssExtractPlugin doesn't support HMR.
-                     * For developing, use 'style-loader' instead.
-                     * */
-                    prod ? MiniCssExtractPlugin.loader : 'style-loader',
-                    'css-loader'
-                ]
-            }
-        ]
+        filename: '[name].js'
     },
     resolve: {
         alias: {
@@ -63,6 +29,14 @@ const common = {
     },
     mode,
     plugins: [
+        new CopyWebpackPlugin({
+            patterns: [
+                {
+                    from: path.join(__dirname, '../resources/static'),
+                    to: PATHS.output
+                },
+            ],
+        }),
         new MiniCssExtractPlugin({
             filename: '[name].css'
         })
@@ -71,7 +45,27 @@ const common = {
 
 if (TARGET === 'start' || !TARGET) {
     module.exports = merge(common, {
+        module: {
+            rules: [
+                {
+                    test: /\.svelte$/,
+                    use: {
+                        loader: 'svelte-loader',
+                        options: {
+                            emitCss: true,
+                            hotReload: true
+                        }
+                    }
+                },
+                {
+                    test: /\.css$/,
+                    use: ['style-loader', 'css-loader']
+                }
+            ]
+        },
         devServer: {
+            hot: true,
+            inline: true,
             port: 3000,
             headers: {
                 "Access-Control-Allow-Origin": "*",
@@ -92,5 +86,13 @@ if (TARGET === 'start' || !TARGET) {
 }
 
 if (TARGET === 'build') {
-    module.exports = merge(common, {});
+    module.exports = merge(common, {
+        mode: 'production',
+        module: {
+            rules: [
+                {test: /\.svelte$/, use: 'svelte-loader'},
+                {test: /\.css$/, use: MiniCssExtractPlugin.loader}
+            ]
+        }
+    });
 }
