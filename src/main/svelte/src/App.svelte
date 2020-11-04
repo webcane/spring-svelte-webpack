@@ -4,7 +4,7 @@
     async function fetchItems() {
         const response = await fetch('/items');
 
-        if (response.ok) {
+        if (response.ok && !response.redirected) {
             return response.json();
 
         } else {
@@ -40,5 +40,6 @@
 </div>
 
 <p>
-    <a href="/login" title="Login with GitHub">Sign in</a>
+    <a href="/login" title="Log in">Sign in</a>
+    <a href="/logout" title="Log out">Sign out</a>
 </p>
